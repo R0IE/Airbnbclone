@@ -1,0 +1,19 @@
+{
+  "name": "airbnb-clone-base",
+  "version": "1.0.0",
+  "description": "Airbnb clone base using Vue, Supabase, Vercel",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.0.0",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "esbuild": "^0.25.10",
+    "vue": "^3.4.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
