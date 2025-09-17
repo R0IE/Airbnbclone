@@ -3,7 +3,7 @@
     <Header />
     <!-- <h1>Airbnb Clone</h1> -->
     <router-view />
-    <Footer />
+  <Footer v-if="$route.path !== '/become-a-host' && $route.path !== '/host-location' && $route.path !== '/confirm-address'" />
   </div>
 </template>
 

@@ -28,24 +28,30 @@ import { ref } from 'vue';
 const route = useRoute();
 const propertyId = route.params.id;
 
-// Example property data, replace with real fetch
-const property = ref({
-  title: 'Studio Victor Hugo/Champs Elysees',
-  image: 'https://a0.muscache.com/im/pictures/airbnb2.jpg',
-  images: [
-    'https://a0.muscache.com/im/pictures/airbnb2.jpg',
-    'https://a0.muscache.com/im/pictures/airbnb3.jpg',
-    'https://a0.muscache.com/im/pictures/airbnb1.jpg',
-    'https://a0.muscache.com/im/pictures/airbnb4.jpg',
-  ],
-  summary: 'Entire rental unit in Paris, France',
-  description: '1 guest · Studio · 2 beds · 1 bath',
-  guests: 1,
-  type: 'Studio',
-  beds: 2,
-  bath: 1,
-  rare: true,
-});
+
+  import { onMounted } from 'vue';
+  import { supabase } from '../supabase.js';
+
+  const property = ref(null);
+
+  onMounted(async () => {
+    const { data, error } = await supabase.from('houses').select('*').eq('id', propertyId).single();
+    if (data) {
+      property.value = {
+        ...data,
+        images: Array.isArray(data.images) ? data.images : [],
+        image: Array.isArray(data.images) && data.images.length ? data.images[0] : '',
+        title: data.name || 'Property',
+        summary: data.address || '',
+        description: `Guests: ${data.guests} · Bedrooms: ${data.bedrooms} · Beds: ${data.beds} · Bathrooms: ${data.bathrooms}`,
+        guests: data.guests,
+        type: data.type || '',
+        beds: data.beds,
+        bath: data.bathrooms,
+        rare: false
+      };
+    }
+  });
 </script>
 
 <style scoped>

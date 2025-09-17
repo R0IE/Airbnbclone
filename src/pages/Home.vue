@@ -29,61 +29,32 @@
 <script setup>
 import SearchBar from '../components/SearchBar.vue';
 import PropertyCard from '../components/PropertyCard.vue';
+import { ref, onMounted } from 'vue';
+import { supabase } from '../supabase.js';
 
-import { ref } from 'vue';
-const properties = [
-  {
-    id: 1,
-    image: 'https://a0.muscache.com/im/pictures/airbnb1.jpg',
-    title: 'Room in 11th Arrondissement',
-    location: 'Paris, France',
-    price: 168
-  },
-  {
-    id: 2,
-    image: 'https://a0.muscache.com/im/pictures/airbnb2.jpg',
-    title: 'Apartment in 16th Arrondissement',
-    location: 'Paris, France',
-    price: 236
-  },
-  {
-    id: 3,
-    image: 'https://a0.muscache.com/im/pictures/airbnb3.jpg',
-    title: 'Room in 8th Arrondissement',
-    location: 'Paris, France',
-    price: 247
-  },
-  {
-    id: 4,
-    image: 'https://a0.muscache.com/im/pictures/airbnb4.jpg',
-    title: 'Room in 11th Arrondissement',
-    location: 'Paris, France',
-    price: 188
-  },
-  {
-    id: 5,
-    image: 'https://a0.muscache.com/im/pictures/airbnb5.jpg',
-    title: 'Hotel in 17th Arrondissement',
-    location: 'Paris, France',
-    price: 102
-  },
-  {
-    id: 6,
-    image: 'https://a0.muscache.com/im/pictures/airbnb6.jpg',
-    title: 'Room in 15th Arrondissement',
-    location: 'Paris, France',
-    price: 174
-  },
-  {
-    id: 7,
-    image: 'https://a0.muscache.com/im/pictures/airbnb7.jpg',
-    title: 'Apartment in Le Marais',
-    location: 'Paris, France',
-    price: 343
-  }
-];
-
+const properties = ref([]);
 const scrollContainer = ref(null);
+
+async function fetchProperties() {
+  const { data, error } = await supabase.from('houses').select('*').order('created_at', { ascending: false });
+  if (error) {
+    console.error('Error fetching houses:', error.message);
+    properties.value = [];
+  } else {
+    properties.value = (data || []).map(house => ({
+      id: house.id,
+      image: house.images && house.images.length ? house.images[0] : '',
+      title: house.name,
+      location: house.location || '',
+      price: house.price || 0
+    }));
+  }
+}
+
+onMounted(() => {
+  fetchProperties();
+});
+
 function scrollLeft() {
   if (scrollContainer.value) {
     scrollContainer.value.scrollBy({ left: -400, behavior: 'smooth' });
